@@ -7,8 +7,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import sqlite_vec
+
 from .chunking import chunk_spans, line_range
-from .config import SUFFIXES
+from .config import EMBED_BATCH, SUFFIXES
 
 if TYPE_CHECKING:
     from .embed import Embedder
@@ -46,6 +48,23 @@ def _insert_document(con: sqlite3.Connection, rel: str, digest: str, text: str) 
         )
 
 
+def _embed_missing(con: sqlite3.Connection, embedder: Embedder) -> int:
+    """Embed every chunk that has no vector yet, so a later run with a key
+    backfills what an FTS-only run left behind."""
+    rows = con.execute(
+        "SELECT id, text FROM chunks WHERE id NOT IN (SELECT chunk_id FROM vec_chunks) ORDER BY id"
+    ).fetchall()
+    for i in range(0, len(rows), EMBED_BATCH):
+        batch = rows[i : i + EMBED_BATCH]
+        vectors = embedder.embed([text for _, text in batch], "document")
+        con.executemany(
+            "INSERT INTO vec_chunks(chunk_id, embedding) VALUES (?, ?)",
+            [(cid, sqlite_vec.serialize_float32(v)) for (cid, _), v in zip(batch, vectors)],
+        )
+        con.commit()
+    return len(rows)
+
+
 def ingest(con: sqlite3.Connection, root: Path, embedder: Embedder | None) -> IngestReport:
     report = IngestReport()
     known = {path: (doc_id, digest) for doc_id, path, digest in
@@ -76,4 +95,6 @@ def ingest(con: sqlite3.Connection, root: Path, embedder: Embedder | None) -> In
             _drop_document(con, doc_id)
             report.removed += 1
     con.commit()
+    if embedder is not None:
+        report.embedded = _embed_missing(con, embedder)
     return report
