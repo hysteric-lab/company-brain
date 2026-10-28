@@ -1,0 +1,30 @@
+{
+ "expectations": [
+  {
+   "text": "Called search_company_knowledge at least once",
+   "passed": true,
+   "evidence": "queries=['dogs pets in the office policy', '寵物 狗 辦公室', 'bring pet animal to office workspace allowed']"
+  },
+  {
+   "text": "States the knowledge base has no answer",
+   "passed": true,
+   "evidence": "知識庫裡沒有「准不准帶狗進辦公室」的規定。原因是這家公司全員遠端，沒有實體辦公室，所以也就沒有這條規則。\n\n最接近的一條在 `values/_index.md:444-452`〈Make family feel welcome〉。它說遠端開會等於拜訪對方的家，如果會議氣氛允許，歡迎讓家人或寵物來跟同事打招呼。換句話說，視訊會議時狗可以入鏡。\n\n如果你去的是公司報銷的共享辦公室，例如 `financ"
+  },
+  {
+   "text": "Searched at least twice before giving up",
+   "passed": true,
+   "evidence": "3 queries"
+  },
+  {
+   "text": "Ran an English-language query for a Chinese question",
+   "passed": true,
+   "evidence": "queries=['dogs pets in the office policy', '寵物 狗 辦公室', 'bring pet animal to office workspace allowed']"
+  }
+ ],
+ "summary": {
+  "passed": 4,
+  "failed": 0,
+  "total": 4,
+  "pass_rate": 1.0
+ }
+}

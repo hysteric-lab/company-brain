@@ -1,0 +1,30 @@
+{
+ "expectations": [
+  {
+   "text": "Called search_company_knowledge at least once",
+   "passed": true,
+   "evidence": "queries=['出差 機場 計程車 報銷', 'airport taxi travel expense reimbursement policy']"
+  },
+  {
+   "text": "Cites finance/expenses.md with path:lines",
+   "passed": true,
+   "evidence": "citations=['expenses.md:283-288', 'expenses.md:56-61', 'expenses.md:296-298']"
+  },
+  {
+   "text": "Quotes the policy text verbatim (quote found in corpus)",
+   "passed": false,
+   "evidence": "no English quotation found"
+  },
+  {
+   "text": "Ran an English-language query for a Chinese question",
+   "passed": true,
+   "evidence": "queries=['出差 機場 計程車 報銷', 'airport taxi travel expense reimbursement policy']"
+  }
+ ],
+ "summary": {
+  "passed": 3,
+  "failed": 1,
+  "total": 4,
+  "pass_rate": 0.75
+ }
+}

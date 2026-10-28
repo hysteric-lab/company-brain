@@ -1,0 +1,23 @@
+{
+ "skill_name": "company-brain",
+ "evals": [
+  {
+   "id": 1,
+   "name": "airport-taxi-zh",
+   "prompt": "我下週出差，去機場搭計程車可以報銷嗎？",
+   "expected_output": "Searches, quotes finance/expenses.md verbatim with path:lines, answers in Chinese, separates doc text from inference"
+  },
+  {
+   "id": 2,
+   "name": "bereavement-en",
+   "prompt": "My grandmother passed away last night. How much time off can I take, and who do I tell?",
+   "expected_output": "Cites time-off-types.md bereavement passage with path:lines, gives who-to-notify from the doc"
+  },
+  {
+   "id": 3,
+   "name": "office-dog-zh",
+   "prompt": "公司准不准帶狗來辦公室？",
+   "expected_output": "Searches (incl. English rephrase), finds nothing relevant, says the knowledge base has no answer, lists queries, makes no policy claim from general knowledge"
+  }
+ ]
+}

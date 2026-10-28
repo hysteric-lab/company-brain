@@ -81,3 +81,8 @@ def test_locked_database_is_not_reported_as_no_answer():
     from company_brain.search import fts_search
     with pytest.raises(sqlite3.OperationalError, match="locked"):
         fts_search(LockedConnection(), "sick leave")
+
+
+def test_nonpositive_top_returns_one_hit(con, kb):
+    ingest(con, kb, None)
+    assert len(search(con, "sick leave", None, top=-1, max_distance=MAXD)) == 1

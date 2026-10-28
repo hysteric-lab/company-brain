@@ -1,0 +1,25 @@
+{
+ "expectations": [
+  {
+   "text": "Called search_company_knowledge at least once",
+   "passed": true,
+   "evidence": "queries=['bereavement leave grandmother death how much time off', 'compassionate leave notify manager HR family member death']"
+  },
+  {
+   "text": "Cites time-off-types.md with path:lines",
+   "passed": true,
+   "evidence": "citations=['time-off-types.md:233-250', 'time-off-types.md:247-263', 'time-off-types.md:275-305', 'time-off-types.md:262-278', 'time-off-types.md:275-305', 'time-off-types.md:233-250', 'time-off-types.md:247-263', 'time-off-types.md:262-278', 'time-off-types.md:247-263', 'time-off-types.md:301-323']"
+  },
+  {
+   "text": "Quotes the policy text verbatim (quote found in corpus)",
+   "passed": true,
+   "evidence": "10 quoted spans, 0 not found in corpus: []"
+  }
+ ],
+ "summary": {
+  "passed": 3,
+  "failed": 0,
+  "total": 3,
+  "pass_rate": 1.0
+ }
+}

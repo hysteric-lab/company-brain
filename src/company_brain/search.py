@@ -109,6 +109,7 @@ def rrf_merge(fts: list[int], vec: list[int]) -> list[tuple[int, float, list[str
 
 def search(con: sqlite3.Connection, query: str, embedder: Embedder | None, top: int = 5,
            max_distance: float = MAX_VEC_DISTANCE) -> list[Hit]:
+    top = max(1, top)
     merged = rrf_merge(fts_search(con, query), vec_search(con, query, embedder, max_distance))[:top]
     if not merged:
         return []

@@ -1,0 +1,30 @@
+{
+ "expectations": [
+  {
+   "text": "Called search_company_knowledge at least once",
+   "passed": true,
+   "evidence": "queries=['出差去機場搭計程車可以報銷嗎', 'taxi to airport business travel reimburse expenses', 'ground transportation taxi limit manager approval attached receipt']"
+  },
+  {
+   "text": "Cites finance/expenses.md with path:lines",
+   "passed": true,
+   "evidence": "citations=['expenses.md:272-288', 'expenses.md:56-61', 'expenses.md:272-288']"
+  },
+  {
+   "text": "Quotes the policy text verbatim (quote found in corpus)",
+   "passed": true,
+   "evidence": "12 quoted spans, 0 not found in corpus: []"
+  },
+  {
+   "text": "Ran an English-language query for a Chinese question",
+   "passed": true,
+   "evidence": "queries=['出差去機場搭計程車可以報銷嗎', 'taxi to airport business travel reimburse expenses', 'ground transportation taxi limit manager approval attached receipt']"
+  }
+ ],
+ "summary": {
+  "passed": 4,
+  "failed": 0,
+  "total": 4,
+  "pass_rate": 1.0
+ }
+}

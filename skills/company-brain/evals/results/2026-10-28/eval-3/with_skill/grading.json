@@ -1,0 +1,30 @@
+{
+ "expectations": [
+  {
+   "text": "Called search_company_knowledge at least once",
+   "passed": true,
+   "evidence": "queries=['公司准不准帶狗來辦公室', 'dogs pets allowed in the office policy', 'animals office building rules visitors workplace']"
+  },
+  {
+   "text": "States the knowledge base has no answer",
+   "passed": true,
+   "evidence": "知識庫裡沒有「能不能帶狗進辦公室」的規定，我找不到准或不准的條文。\n\n我搜了三次：中文原句、英文的 `dogs pets allowed in the office policy`、再放寬成 `animals office building rules visitors workplace`。出來的都是費用報銷規定，沒有一條講實體辦公室能不能帶寵物。\n\n唯一提到寵物的段落講的是視訊會議，不是實體辦"
+  },
+  {
+   "text": "Searched at least twice before giving up",
+   "passed": true,
+   "evidence": "3 queries"
+  },
+  {
+   "text": "Ran an English-language query for a Chinese question",
+   "passed": true,
+   "evidence": "queries=['公司准不准帶狗來辦公室', 'dogs pets allowed in the office policy', 'animals office building rules visitors workplace']"
+  }
+ ],
+ "summary": {
+  "passed": 4,
+  "failed": 0,
+  "total": 4,
+  "pass_rate": 1.0
+ }
+}

@@ -37,6 +37,11 @@ class VoyageEmbedder:
                     time.sleep(2 ** attempt * 5)
                     continue
                 raise
+            except urllib.error.URLError:  # network blip: same back-off
+                if attempt < 4:
+                    time.sleep(2 ** attempt * 5)
+                    continue
+                raise
         raise RuntimeError("unreachable")
 
     def embed(self, texts: list[str], input_type: InputType) -> list[list[float]]:

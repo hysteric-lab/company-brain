@@ -1,0 +1,25 @@
+{
+ "expectations": [
+  {
+   "text": "Called search_company_knowledge at least once",
+   "passed": true,
+   "evidence": "queries=['bereavement leave grandparent death time off', 'who to notify absence compassionate leave manager HR']"
+  },
+  {
+   "text": "Cites time-off-types.md with path:lines",
+   "passed": true,
+   "evidence": "citations=['time-off-types.md:249-250', 'time-off-types.md:237-309']"
+  },
+  {
+   "text": "Quotes the policy text verbatim (quote found in corpus)",
+   "passed": false,
+   "evidence": "no English quotation found"
+  }
+ ],
+ "summary": {
+  "passed": 2,
+  "failed": 1,
+  "total": 3,
+  "pass_rate": 0.667
+ }
+}

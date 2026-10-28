@@ -1,5 +1,4 @@
-"""Constants shared across the package. Values match the retrieval stack this
-was extracted from (youtube archive: search.py / embed_chunks.py)."""
+"""Constants shared across the package."""
 
 VOYAGE_EMBED = "https://api.voyageai.com/v1/embeddings"
 MODEL = "voyage-3.5-lite"

@@ -58,3 +58,18 @@ def test_voyage_retry(monkeypatch):
     vectors = VoyageEmbedder("k").embed(["hello"], "document")
     assert calls["n"] == 3
     assert vectors == [[0.5, 0.5]]
+
+
+def test_voyage_retries_network_errors(monkeypatch):
+    calls = {"n": 0}
+
+    def flaky_urlopen(req, timeout=None):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            raise urllib.error.URLError("connection reset")
+        return io.BytesIO(json.dumps({"data": [{"embedding": [1.0]}]}).encode())
+
+    monkeypatch.setattr(embed.urllib.request, "urlopen", flaky_urlopen)
+    monkeypatch.setattr(embed.time, "sleep", lambda s: None)
+    assert VoyageEmbedder("k").embed(["x"], "query") == [[1.0]]
+    assert calls["n"] == 2

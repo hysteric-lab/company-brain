@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import sys
 import textwrap
+import urllib.error
 from pathlib import Path
 
 from .embed import default_embedder
@@ -26,6 +27,10 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("mcp", help="serve the search tool over MCP (stdio)")
     args = parser.parse_args(argv)
     db = Path(args.db)
+    if args.cmd in ("ask", "mcp") and not db.exists():
+        # Opening a missing path would create an empty index and answer "no match".
+        print(f"brain: no index at {db}; run `brain --db {db} ingest DIR` first", file=sys.stderr)
+        return 2
 
     if args.cmd == "mcp":
         # stdout is the JSON-RPC channel from here on; diagnostics go to stderr only.
@@ -40,6 +45,10 @@ def main(argv: list[str] | None = None) -> int:
                 r = ingest(con, args.dir, default_embedder())
             except NotADirectoryError as e:
                 print(f"brain: {e}", file=sys.stderr)
+                return 2
+            except urllib.error.HTTPError as e:
+                print(f"brain: Voyage API rejected the request (HTTP {e.code}); "
+                      "check VOYAGE_API_KEY", file=sys.stderr)
                 return 2
             print(f"added={r.added} updated={r.updated} unchanged={r.unchanged} "
                   f"removed={r.removed} skipped={len(r.skipped)} embedded={r.embedded}")
