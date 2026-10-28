@@ -36,7 +36,11 @@ def main(argv: list[str] | None = None) -> int:
     con = connect(db)
     try:
         if args.cmd == "ingest":
-            r = ingest(con, args.dir, default_embedder())
+            try:
+                r = ingest(con, args.dir, default_embedder())
+            except NotADirectoryError as e:
+                print(f"brain: {e}", file=sys.stderr)
+                return 2
             print(f"added={r.added} updated={r.updated} unchanged={r.unchanged} "
                   f"removed={r.removed} skipped={len(r.skipped)} embedded={r.embedded}")
             return 0

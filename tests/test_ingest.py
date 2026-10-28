@@ -1,3 +1,5 @@
+import pytest
+
 from company_brain.ingest import ingest
 
 
@@ -47,4 +49,23 @@ def test_non_utf8_skipped(con, corpus):
     (corpus / "latin.txt").write_bytes(bytes([0xE9, 0x74, 0xE9]))
     report = ingest(con, corpus, None)
     assert report.skipped == ["latin.txt"]
+    assert report.added == 2
+
+
+def test_missing_root_raises_and_keeps_index(con, corpus):
+    ingest(con, corpus, None)
+    with pytest.raises(NotADirectoryError):
+        ingest(con, corpus.parent / "typo", None)
+    assert doc_paths(con) == {"a.md", "sub/b.txt"}
+
+
+def test_unreadable_file_skipped(con, corpus):
+    locked = corpus / "locked.md"
+    locked.write_text("secret", encoding="utf-8")
+    locked.chmod(0)
+    try:
+        report = ingest(con, corpus, None)
+    finally:
+        locked.chmod(0o644)
+    assert report.skipped == ["locked.md"]
     assert report.added == 2

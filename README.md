@@ -8,12 +8,19 @@ Point it at a folder of company documents and ask questions in any language. It 
 git clone https://github.com/hysteric-lab/company-brain && cd company-brain
 python3 -m venv .venv && .venv/bin/pip install -e .
 bash scripts/fetch_demo_corpus.sh                 # 4 pages of GitLab's public handbook
-export VOYAGE_API_KEY=...                         # optional, see below
 .venv/bin/brain --db demo.db ingest demo/corpus
-.venv/bin/brain --db demo.db ask "員工請病假的規定是什麼？"
+.venv/bin/brain --db demo.db ask "What is the sick leave policy?"
 ```
 
-Needs Python 3.11+ whose `sqlite3` can load extensions (sqlite-vec is one). Homebrew's and uv's Pythons can; the python.org macOS installer cannot, and `brain` says so and names the fix. With uv: `uv venv --python-preference only-managed --python 3.12`.
+That works with no API key, on keyword search alone. To ask in other words or another language, set a [Voyage AI](https://www.voyageai.com/) key and run `ingest` again. The second run adds vectors to the existing index; it does not rebuild it.
+
+```bash
+export VOYAGE_API_KEY=...
+.venv/bin/brain --db demo.db ingest demo/corpus
+.venv/bin/brain --db demo.db ask "員工請病假的規定是什麼？"   # Chinese question, English handbook
+```
+
+Needs Python 3.11+ whose `sqlite3` can load extensions (sqlite-vec is one). Homebrew's and uv's Pythons can; the python.org macOS installer cannot, and `brain` says so and names the fix. With uv: `uv venv --seed --python-preference only-managed --python 3.12 .venv`.
 
 `ask` prints each passage under a header like `people-group/time-off-and-absence/time-off-types.md:L129-148`. When nothing relevant is found, it prints `No matching passages in the knowledge base.` and exits with status 1.
 
@@ -31,9 +38,10 @@ Needs Python 3.11+ whose `sqlite3` can load extensions (sqlite-vec is one). Home
 
 - **Re-ingest is incremental.** Files are compared by sha256. Changed files are re-chunked, deleted files lose their chunks and vectors, and unchanged files are skipped.
 - **Missing vectors are backfilled.** Ingest first without a key, then run it again with one, and the chunks that have no vectors get embedded.
-- **No key means FTS only.** Without `VOYAGE_API_KEY`, everything still works on full-text search alone, and stderr prints one line saying so.
-- **"No answer" is a distance cut-off.** Vector hits farther than `MAX_VEC_DISTANCE` are dropped. The value in `src/company_brain/config.py` was calibrated on the demo corpus, and the measurements are recorded in that file. The gap between relevant and irrelevant questions was narrow, so recalibrate on your own documents.
-- Non-UTF-8 files are skipped with a warning instead of aborting the run.
+- **No key means keyword search only.** Without `VOYAGE_API_KEY`, ingest and ask still run, and stderr prints one line saying so. A keyword hit needs a passage that contains the question's content words, so paraphrases and cross-language questions need the key.
+- **How "no answer" is decided.** A vector hit counts only within `MAX_VEC_DISTANCE`. That value was calibrated on the demo corpus, the measurements are in `src/company_brain/config.py`, and the gap was narrow, so recalibrate on your own documents. A keyword hit needs every content word of the question (English stopwords and punctuation ignored), or, for a question written without spaces such as Chinese, at least two thirds of its 3-character fragments. If neither kind of hit survives, the answer is empty.
+- A typo'd `ingest` path is an error (exit 2), not "everything was deleted".
+- Files that are not UTF-8 or cannot be read are skipped with a warning instead of aborting the run. A file that was indexed before and has since become unreadable is removed from the index.
 
 ## Use it from Claude (MCP)
 
@@ -92,7 +100,7 @@ The offline suite uses a deterministic bag-of-words embedder. It covers incremen
 
 ## Demo corpus
 
-`scripts/fetch_demo_corpus.sh` downloads four pages from [GitLab's public handbook](https://gitlab.com/gitlab-com/content-sites/handbook) when you run it. They are not committed here: the handbook repository's LICENSE grants MIT for "the GitLab Software" and does not spell out terms for the handbook text, so this repo links to the source instead of redistributing it. All handbook content belongs to GitLab B.V.
+`scripts/fetch_demo_corpus.sh` downloads four pages from [GitLab's public handbook](https://gitlab.com/gitlab-com/content-sites/handbook) when you run it. The pages are pinned to one commit so that the line numbers quoted above stay valid. They are not committed here: the handbook repository's LICENSE grants MIT for "the GitLab Software" and does not spell out terms for the handbook text, so this repo links to the source instead of redistributing it. All handbook content belongs to GitLab B.V.
 
 ## Licence
 

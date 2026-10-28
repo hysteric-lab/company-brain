@@ -17,3 +17,8 @@ def test_cli_no_match_exit_1(tmp_path, kb, monkeypatch, capsys):
     main(["--db", db, "ingest", str(kb)])
     assert main(["--db", db, "ask", "zzqqxx"]) == 1
     assert "No matching passages" in capsys.readouterr().out
+
+
+def test_cli_ingest_bad_path_exit_2(tmp_path, capsys):
+    assert main(["--db", str(tmp_path / "x.db"), "ingest", str(tmp_path / "typo")]) == 2
+    assert "not a directory" in capsys.readouterr().err

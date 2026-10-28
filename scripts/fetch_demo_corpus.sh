@@ -3,7 +3,9 @@
 # Fetched at run time, not vendored: see README "Demo corpus" for source and licence.
 set -euo pipefail
 
-BASE="https://gitlab.com/gitlab-com/content-sites/handbook/-/raw/main/content/handbook"
+# Pinned to one handbook commit so the line numbers quoted in README stay valid.
+REV="129243bcffcf6cbc8c2e83f537f1836b99900a61"  # main on 2026-10-28
+BASE="https://gitlab.com/gitlab-com/content-sites/handbook/-/raw/$REV/content/handbook"
 PAGES=(
   "values/_index.md"
   "communication/_index.md"

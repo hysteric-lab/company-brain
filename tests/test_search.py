@@ -1,3 +1,5 @@
+import sqlite3
+
 import pytest
 
 from company_brain.ingest import ingest
@@ -44,3 +46,38 @@ def test_fts_syntax_chars_safe(con, kb, query):
 def test_cjk_query_no_crash(con, kb):
     ingest(con, kb, None)
     assert isinstance(search(con, "差旅報銷", None, max_distance=MAXD), list)
+
+
+def test_natural_question_without_key(con, kb):
+    ingest(con, kb, None)
+    hits = search(con, "What is the sick leave policy?", None, max_distance=MAXD)
+    assert hits and hits[0].path == "leave.md"
+
+
+def test_cjk_unrelated_query_no_keyword_noise(con, tmp_path):
+    root = tmp_path / "zh"
+    root.mkdir()
+    (root / "leave.md").write_text("病假的規定是什麼？請先通知你的主管。\n", encoding="utf-8")
+    ingest(con, root, None)
+    assert search(con, "病假的規定", None, max_distance=MAXD)[0].path == "leave.md"
+    assert search(con, "火星移民的規定是什麼", None, max_distance=MAXD) == []
+
+
+def test_chunk_deleted_mid_query_is_skipped(con, kb, monkeypatch):
+    from company_brain import search as search_mod
+    ingest(con, kb, None)
+    real = search_mod.fts_search
+    monkeypatch.setattr(search_mod, "fts_search", lambda c, q: real(c, q) + [999999])
+    hits = search(con, "sick leave", None, max_distance=MAXD)
+    assert [h.path for h in hits] == ["leave.md"]
+
+
+class LockedConnection:
+    def execute(self, *args):
+        raise sqlite3.OperationalError("database is locked")
+
+
+def test_locked_database_is_not_reported_as_no_answer():
+    from company_brain.search import fts_search
+    with pytest.raises(sqlite3.OperationalError, match="locked"):
+        fts_search(LockedConnection(), "sick leave")

@@ -66,6 +66,9 @@ def _embed_missing(con: sqlite3.Connection, embedder: Embedder) -> int:
 
 
 def ingest(con: sqlite3.Connection, root: Path, embedder: Embedder | None) -> IngestReport:
+    if not root.is_dir():
+        # A typo'd path would otherwise look like "every known file was deleted".
+        raise NotADirectoryError(f"not a directory: {root}")
     report = IngestReport()
     known = {path: (doc_id, digest) for doc_id, path, digest in
              con.execute("SELECT id, path, sha256 FROM documents")}
@@ -74,8 +77,9 @@ def ingest(con: sqlite3.Connection, root: Path, embedder: Embedder | None) -> In
         rel = f.relative_to(root).as_posix()
         try:
             text = f.read_text(encoding="utf-8")
-        except UnicodeDecodeError:
-            print(f"(skipped {rel}: not UTF-8)", file=sys.stderr)
+        except (UnicodeDecodeError, OSError) as e:
+            why = "not UTF-8" if isinstance(e, UnicodeDecodeError) else e.strerror
+            print(f"(skipped {rel}: {why})", file=sys.stderr)
             report.skipped.append(rel)
             continue
         seen.add(rel)

@@ -19,5 +19,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
           cache-dependency-path: pyproject.toml
+      - name: sqlite can load extensions and has FTS5 trigram (>= 3.34)
+        run: python -c "import sqlite3; c = sqlite3.connect(':memory:'); c.enable_load_extension(True); c.execute(\"CREATE VIRTUAL TABLE t USING fts5(x, tokenize='trigram')\"); print(sqlite3.sqlite_version)"
       - run: pip install -e ".[dev]"
       - run: pytest -q -m "not integration"
