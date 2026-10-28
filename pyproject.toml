@@ -1,0 +1,24 @@
+[project]
+name = "company-brain"
+version = "0.1.0"
+description = "Hybrid-search knowledge base over a folder of company docs, with file:line citations, for the CLI and Claude over MCP."
+requires-python = ">=3.11"
+dependencies = ["sqlite-vec>=0.1.6", "mcp>=1.27"]
+license = "Apache-2.0"
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+brain = "company_brain.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["integration: network tests, opt-in via BRAIN_INTEGRATION=1"]

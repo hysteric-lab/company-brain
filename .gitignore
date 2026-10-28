@@ -7,3 +7,5 @@ data/
 __pycache__/
 .venv/
 node_modules/
+*.egg-info/
+.pytest_cache/
