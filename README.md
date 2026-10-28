@@ -13,6 +13,8 @@ export VOYAGE_API_KEY=...                         # optional, see below
 .venv/bin/brain --db demo.db ask "員工請病假的規定是什麼？"
 ```
 
+Needs Python 3.11+ whose `sqlite3` can load extensions (sqlite-vec is one). Homebrew's and uv's Pythons can; the python.org macOS installer cannot, and `brain` says so and names the fix. With uv: `uv venv --python-preference only-managed --python 3.12`.
+
 `ask` prints each passage under a header like `people-group/time-off-and-absence/time-off-types.md:L129-148`. When nothing relevant is found, it prints `No matching passages in the knowledge base.` and exits with status 1.
 
 ## How it works

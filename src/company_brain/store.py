@@ -36,11 +36,22 @@ CREATE VIRTUAL TABLE IF NOT EXISTS vec_chunks USING vec0(
 """
 
 
-def connect(db_path: Path) -> sqlite3.Connection:
-    con = sqlite3.connect(db_path)
+def load_vec_extension(con: sqlite3.Connection) -> None:
+    if not hasattr(con, "enable_load_extension"):
+        raise RuntimeError(
+            "This Python's sqlite3 was built without enable_load_extension, so the "
+            "sqlite-vec extension cannot load (the python.org macOS installer is one such "
+            "build). Use a Python that supports it, e.g. Homebrew's python3 or one "
+            "installed with uv (`uv venv --python 3.12`)."
+        )
     con.enable_load_extension(True)
     sqlite_vec.load(con)
     con.enable_load_extension(False)
+
+
+def connect(db_path: Path) -> sqlite3.Connection:
+    con = sqlite3.connect(db_path)
+    load_vec_extension(con)
     con.execute("PRAGMA foreign_keys=ON")
     con.executescript(SCHEMA)
     return con
