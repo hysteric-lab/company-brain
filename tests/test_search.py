@@ -1,27 +1,9 @@
-from pathlib import Path
-
 import pytest
 
 from company_brain.ingest import ingest
 from company_brain.search import search
 
-# Each file stays under 15 words in total: the bag-of-words FakeEmbedder's
-# distances grow with document length, and the unit tests pin max_distance=1.2.
-DOCS = {
-    "leave.md": "# Leave\nSick leave policy: tell your manager.\n",
-    "expenses.md": "# Expenses\nTravel costs are reimbursed\nwith receipts.\n",
-    "values.md": "# Values\nWe iterate in small steps.\n",
-}
 MAXD = 1.2
-
-
-@pytest.fixture
-def kb(tmp_path: Path):
-    root = tmp_path / "kb"
-    root.mkdir()
-    for name, text in DOCS.items():
-        (root / name).write_text(text, encoding="utf-8")
-    return root
 
 
 def test_fts_only_hit(con, kb):

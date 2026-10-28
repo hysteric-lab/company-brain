@@ -3,7 +3,7 @@ name = "company-brain"
 version = "0.1.0"
 description = "Hybrid-search knowledge base over a folder of company docs, with file:line citations, for the CLI and Claude over MCP."
 requires-python = ">=3.11"
-dependencies = ["sqlite-vec>=0.1.6", "mcp>=1.27"]
+dependencies = ["sqlite-vec>=0.1.6", "mcp>=2.3,<3"]
 license = "Apache-2.0"
 
 [project.optional-dependencies]

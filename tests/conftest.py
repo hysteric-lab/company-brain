@@ -12,6 +12,24 @@ def con(tmp_path: Path):
     c.close()
 
 
+# Each file stays under 15 words in total: the bag-of-words FakeEmbedder's
+# distances grow with document length, and the unit tests pin max_distance=1.2.
+DOCS = {
+    "leave.md": "# Leave\nSick leave policy: tell your manager.\n",
+    "expenses.md": "# Expenses\nTravel costs are reimbursed\nwith receipts.\n",
+    "values.md": "# Values\nWe iterate in small steps.\n",
+}
+
+
+@pytest.fixture
+def kb(tmp_path: Path):
+    root = tmp_path / "kb"
+    root.mkdir()
+    for name, text in DOCS.items():
+        (root / name).write_text(text, encoding="utf-8")
+    return root
+
+
 @pytest.fixture
 def corpus(tmp_path: Path) -> Path:
     root = tmp_path / "docs"
