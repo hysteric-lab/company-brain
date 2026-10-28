@@ -43,6 +43,12 @@ Needs Python 3.11+ whose `sqlite3` can load extensions (sqlite-vec is one). Home
 claude mcp add company-brain -- "$PWD/.venv/bin/brain" --db "$PWD/demo.db" mcp
 ```
 
+### Claude skill
+
+`skills/company-brain/SKILL.md` tells Claude how to answer from the knowledge base. It searches, re-queries in English when the question is in another language, quotes the passage verbatim with `path:lines`, and says plainly when the documents have no answer. Copy it to `~/.claude/skills/company-brain/` to use it.
+
+Measured on 2026-10-28 with the demo corpus: three questions, each run once with the skill and once without, all graded by script. Two questions were in Chinese: one about an airport taxi expense and one about bringing a dog to the office, which the documents do not cover. The third was in English, about bereavement leave. With the skill, all 11 checks passed. Without it, 9 of 11 passed. The two misses were the same check in both answered questions: without the skill, Claude cited `path:lines` but paraphrased the policy instead of quoting it, so a reader could not check the wording. Both versions answered "not in the documents" for the dog question. The skill costs about 31% more tokens per answer. With one run per question, this is a smoke test, not a benchmark.
+
 ### Run record (2026-10-28, Claude Code, demo corpus)
 
 Question asked: `GitLab 員工請病假要通知誰？用 company-brain 工具查，回答時引用檔案與行號。` ("Who must a GitLab employee notify when taking sick leave? Use the company-brain tool and cite file and line numbers.")
